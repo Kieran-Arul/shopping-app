@@ -20,7 +20,7 @@
 
 	javac com/kieran/Main.java
 
-5\. Run the command to play the game
+5\. Run the command to run the app
 
 	java com.kieran.Main
 
