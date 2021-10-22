@@ -1,7 +1,7 @@
 ## Project Overview
 
 - This program simulates a shopping app, complete with item reservation, inventory management and shopping baskets
-- Note I am still working on the main method. While the program logic is sound, it is not user-friendly yet.
+- Note I am still working on the main method. While the application's logic is completed and the main method will run, it is not user-friendly yet.
 
 ## How to Use
 
