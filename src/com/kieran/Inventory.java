@@ -1,30 +1,26 @@
 package com.kieran;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class Inventory {
 
-    private final Map<String, Item> availableItems;
+    private final Map<String, Item> availableStockItems;
 
     public Inventory() {
-
-        this.availableItems = new LinkedHashMap<>();
-
+        this.availableStockItems = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     }
 
-    public Item queryItem(String itemName) {
-
-        return this.availableItems.get(itemName);
-
+    public Item queryStockItem(String stockItemName) {
+        return this.availableStockItems.get(stockItemName);
     }
 
-    public void addItem(Item item, int quantity) {
+    public void addStock(Item stockItem, int quantity) {
 
-        if ((item != null) && (quantity >= 0)) {
+        if ((stockItem != null) && (quantity >= 0)) {
 
-            Item desiredStockItem = queryItem(item.getName());
+            Item desiredStockItem = queryStockItem(stockItem.getName());
 
             if (desiredStockItem != null) {
 
@@ -32,8 +28,8 @@ public class Inventory {
 
             } else {
 
-                item.adjustStock(quantity);
-                this.availableItems.put(item.getName(), item);
+                stockItem.adjustStock(quantity);
+                this.availableStockItems.put(stockItem.getName(), stockItem);
 
             }
 
@@ -41,17 +37,17 @@ public class Inventory {
 
     }
 
-    public boolean reserveOrUnReserveItem(Item itemToReserve, int quantity, boolean reserve) {
+    public boolean reserveOrUnReserveStock(Item stockItemToReserve, int quantity, boolean reserve) {
 
-        if ((itemToReserve != null) && (quantity > 0)) {
+        if ((stockItemToReserve != null) && (quantity > 0)) {
 
             if (reserve) {
 
-                return itemToReserve.adjustQuantityReserved(quantity);
+                return stockItemToReserve.adjustQuantityReserved(quantity);
 
             } else {
 
-                return itemToReserve.adjustQuantityReserved(-quantity);
+                return stockItemToReserve.adjustQuantityReserved(-quantity);
 
             }
 
@@ -61,53 +57,32 @@ public class Inventory {
 
     }
 
-    public void sellItem(Item itemToSell, int quantity) {
+    public void sellStock(Item stockItemToSell, int quantity) {
 
-        if ((itemToSell != null) && (quantity > 0)) {
-
-            itemToSell.adjustStock(-quantity);
-
+        if ((stockItemToSell != null) && (quantity > 0)) {
+            stockItemToSell.adjustStock(-quantity);
         }
 
     }
 
-    public void updateItemPrice(String itemName, double newPrice) {
+    public void updateStockItemPrice(String stockItemName, double newPrice) {
 
-        Item desiredStockItem = this.queryItem(itemName);
+        Item desiredStockItem = this.queryStockItem(stockItemName);
 
         if (desiredStockItem != null) {
 
             desiredStockItem.setPrice(newPrice);
 
+        } else {
+
+            System.out.println("Stock Item does not exist");
+
         }
 
     }
 
-    public Map<String, Item> getAvailableItems() {
-
-        return Collections.unmodifiableMap(this.availableItems);
-
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder message = new StringBuilder("\nINVENTORY\n");
-        double totalCost = 0.0;
-
-        for (Map.Entry<String, Item> itemMapping: this.availableItems.entrySet()) {
-
-            Item stockItem = itemMapping.getValue();
-            double stockItemValue = stockItem.getPrice() * stockItem.getQuantityInStock();
-
-            message.append("There are ").append(stockItem.getQuantityInStock()).append(" of ").append(stockItem.getName()).append(" in stock\n");
-            message.append("There are ").append(stockItem.getQuantityReserved()).append(" of ").append(stockItem.getName()).append(" under reservation\n");
-            totalCost += stockItemValue;
-
-        }
-
-        return message + "Total Inventory Value = $" + totalCost;
-
+    public Map<String, Item> getAvailableStockItems() {
+        return Collections.unmodifiableMap(this.availableStockItems);
     }
 
 }

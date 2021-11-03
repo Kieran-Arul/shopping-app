@@ -5,55 +5,49 @@ import java.util.Map;
 
 public class ShoppingPlatform {
 
-    private static final Inventory INVENTORY = new Inventory();
     private final String platformName;
-    private final HashMap<String, ShoppingBasket> baskets;
+    private final Inventory stockList;
+    private final HashMap<String, User> users;
 
     public ShoppingPlatform(String platformName) {
-
         this.platformName = platformName;
-        this.baskets = new HashMap<>();
+        this.users = new HashMap<>();
+        this.stockList = new Inventory();
+    }
+
+    public HashMap<String, User> getUsers() {
+        return new HashMap<>(this.users);
+    }
+
+    public void addToStockList(String itemName, double price, int quantity) {
+        this.stockList.addStock(new Item(itemName, price), quantity);
+    }
+
+    public User getOrCreateUser(String name) {
+
+        if (this.users.get(name) == null) {
+
+            User newUser = new User(name);
+
+            this.users.put(newUser.getName(), newUser);
+
+            return newUser;
+
+        }
+
+        return this.users.get(name);
 
     }
 
-    public String getPlatformName() {
-        return this.platformName;
-    }
+    public void addItemToBasket(User currentUser, String itemName, int quantity) {
 
-    public void addToInventory(Item itemToAdd, int quantity) {
+        ShoppingBasket desiredBasket = currentUser.getBasket();
+        Item desiredItem = this.stockList.queryStockItem(itemName);
 
-        INVENTORY.addItem(itemToAdd, quantity);
-
-    }
-
-    public void createBasket(String basketName) {
-
-        ShoppingBasket newBasket = new ShoppingBasket(basketName);
-
-        this.baskets.put(basketName, newBasket);
-
-    }
-
-    public ShoppingBasket getBasket(String basketName) {
-
-        return this.baskets.get(basketName);
-
-    }
-
-    public void addItemToBasket(String basketName, String itemName, int quantity) {
-
-        ShoppingBasket desiredBasket = this.getBasket(basketName);
-        Item desiredItem = INVENTORY.queryItem(itemName);
-
-        // Ensures that the desired basket, desired item and quantity are all valid
         if ((desiredBasket != null) && (desiredItem != null) && (quantity > 0)) {
 
-            // Checks if the given quantity of that item can be reserved
-            // (i.e. ensures there is still stock that can be reserved)
-            boolean itemsWasReserved = INVENTORY.reserveOrUnReserveItem(desiredItem, quantity, true);
+            boolean itemsWasReserved = stockList.reserveOrUnReserveStock(desiredItem, quantity, true);
 
-            // If it is possible to reserve the quantity of stock, requested, add that item in the desired quantity
-            // to the basket
             if (itemsWasReserved) {
 
                 desiredBasket.addToBasket(desiredItem, quantity);
@@ -72,20 +66,15 @@ public class ShoppingPlatform {
 
     }
 
-    public void removeItemFromBasket(String basketName, String itemName, int quantity) {
+    public void removeItemFromBasket(User currentUser, String itemName, int quantity) {
 
-        ShoppingBasket desiredBasket = this.getBasket(basketName);
-        Item desiredItem = INVENTORY.queryItem(itemName);
+        ShoppingBasket desiredBasket = currentUser.getBasket();
+        Item desiredItem = stockList.queryStockItem(itemName);
 
         if ((desiredBasket != null) && (desiredItem != null) && (quantity > 0)) {
 
-            // Checks if to make sure that the user's basket contains at least the amount he wants to remove
-            // Only if it is actually possible for the user to remove that amount of items from his basket
-            // is the given quantity actually un-reserved
             if (desiredBasket.removeFromBasket(desiredItem, quantity)) {
-
-                INVENTORY.reserveOrUnReserveItem(desiredItem, quantity, false);
-
+                stockList.reserveOrUnReserveStock(desiredItem, quantity, false);
             }
 
         } else {
@@ -96,28 +85,25 @@ public class ShoppingPlatform {
 
     }
 
-    public void checkOutBasket(String basketName) {
+    public void checkOutBasket(User currentUser) {
 
-        ShoppingBasket desiredBasket = this.getBasket(basketName);
+        ShoppingBasket desiredBasket = currentUser.getBasket();
 
         if (desiredBasket != null) {
 
             System.out.println("Items you have purchased on " + this.platformName);
 
-            // Loops over each entry in the basket (item to quantity purchased mapping)
             for (Map.Entry<Item, Integer> entry: desiredBasket.getBasketItems().entrySet()) {
 
-                // Un-reserves the stockItem that is going to be sold
-                // Could be included in the sell stock method actually since
-                // when selling stock this must always be called
-                INVENTORY.reserveOrUnReserveItem(entry.getKey(), entry.getValue(), false);
+                stockList.reserveOrUnReserveStock(entry.getKey(), entry.getValue(), false);
 
-                // Decreases the stock quantity of the item that is being sold
-                INVENTORY.sellItem(entry.getKey(), entry.getValue());
+                stockList.sellStock(entry.getKey(), entry.getValue());
 
                 System.out.println("You have purchased " + entry.getValue() + " " + entry.getKey().getName());
 
             }
+
+            currentUser.setCheckedOutStatus(true);
 
         } else {
 
@@ -127,9 +113,11 @@ public class ShoppingPlatform {
 
     }
 
-    public void printInventory() {
+    public void printStockList() {
 
-        System.out.println(INVENTORY);
+        for (Map.Entry<String, Item> item : this.stockList.getAvailableStockItems().entrySet()) {
+            System.out.println(item.getKey());
+        }
 
     }
 

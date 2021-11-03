@@ -6,29 +6,23 @@ import java.util.TreeMap;
 
 public class ShoppingBasket {
 
-    private final String name;
-    private final Map<Item, Integer> addedItems;
+    private final Map<Item, Integer> items;
 
-    public ShoppingBasket(String name) {
-
-        this.name = name;
-        this.addedItems = new TreeMap<>();
-
+    public ShoppingBasket() {
+        this.items = new TreeMap<>();
     }
 
     public int getBasketItemQuantity(Item item) {
-
-        return this.addedItems.getOrDefault(item, 0);
-
+        return this.items.getOrDefault(item, 0);
     }
 
     public void addToBasket(Item itemToAdd, int quantity) {
 
         if ((itemToAdd != null) && (quantity > 0)) {
 
-            int similarItemsAlreadyInBasket = this.addedItems.getOrDefault(itemToAdd, 0);
+            int similarItemsAlreadyInBasket = this.items.getOrDefault(itemToAdd, 0);
 
-            this.addedItems.put(itemToAdd, similarItemsAlreadyInBasket + quantity);
+            this.items.put(itemToAdd, similarItemsAlreadyInBasket + quantity);
 
             System.out.println(itemToAdd.getName() + " added to basket. Quantity = " + quantity);
 
@@ -40,17 +34,17 @@ public class ShoppingBasket {
 
         if ((itemToRemove != null) && (quantity > 0)) {
 
-            int similarItemsAlreadyInBasket = this.addedItems.getOrDefault(itemToRemove, 0);
+            int similarItemsAlreadyInBasket = this.items.getOrDefault(itemToRemove, 0);
 
             if (similarItemsAlreadyInBasket == quantity) {
 
-                this.addedItems.remove(itemToRemove);
+                this.items.remove(itemToRemove);
 
                 return true;
 
             } else if (similarItemsAlreadyInBasket > quantity) {
 
-                this.addedItems.put(itemToRemove, similarItemsAlreadyInBasket - quantity);
+                this.items.put(itemToRemove, similarItemsAlreadyInBasket - quantity);
 
                 return true;
 
@@ -68,17 +62,17 @@ public class ShoppingBasket {
 
     public Map<Item, Integer> getBasketItems() {
 
-        return Collections.unmodifiableMap(this.addedItems);
+        return Collections.unmodifiableMap(this.items);
 
     }
 
     @Override
     public String toString() {
 
-        StringBuilder message = new StringBuilder("\nShopping Basket " + this.name + " contains " + this.addedItems.size() + " items\n");
+        StringBuilder message = new StringBuilder("\nShopping Basket contains " + this.items.size() + " items\n");
         double totalCost = 0.0;
 
-        for (Map.Entry<Item, Integer> mapPair: this.addedItems.entrySet()) {
+        for (Map.Entry<Item, Integer> mapPair: this.items.entrySet()) {
 
             message.append(mapPair.getKey().getName()).append(". ").append(mapPair.getValue()).append(" purchased\n");
             totalCost += mapPair.getKey().getPrice() * mapPair.getValue();

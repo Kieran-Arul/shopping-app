@@ -48,9 +48,6 @@ public class Item implements Comparable<Item> {
 
         int newReservedQuantity = this.quantityReserved + quantity;
 
-        // Ensures that the reserved quantity is at most the total amount of stock available
-        // Also ensures that the reserved quantity is at least 0
-        // Guards against a user entering invalid values
         if ((this.quantityStock >= newReservedQuantity) && (newReservedQuantity >= 0)) {
 
             this.quantityReserved = newReservedQuantity;
@@ -66,9 +63,7 @@ public class Item implements Comparable<Item> {
     }
 
     public void adjustStock(int quantity) {
-
         this.quantityStock += quantity;
-
     }
 
     @Override
@@ -80,15 +75,11 @@ public class Item implements Comparable<Item> {
     public boolean equals(Object obj) {
 
         if (this == obj) {
-
             return true;
-
         }
 
         if ((obj == null) || (this.getClass() != obj.getClass())) {
-
             return false;
-
         }
 
         return this.name.equals(((Item) obj).getName());
@@ -99,15 +90,11 @@ public class Item implements Comparable<Item> {
     public int compareTo(Item item) {
 
         if (this == item) {
-
             return 0;
-
         }
 
         if (item != null) {
-
             return this.name.compareTo(item.getName());
-
         }
 
         throw new NullPointerException();
