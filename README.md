@@ -24,6 +24,6 @@
 
 	java com.kieran.Main
 
-6\. Note that in order to add items to the platform, you need to login as a user. That means, when you first run the program and it prompts you to enter your name, you need to enter "admin".
+6\. Note that in order to add items to the platform, you need to login as an admin. That means, when you first run the program and it prompts you to enter your name, you need to enter "admin".
 
-7\. Later, the program will give you the opportunity to login as an ordinary user who can buy the available items.
+7\. Later, the program will give you the opportunity to login as an ordinary user who can buy the available items. In order to do so, simply enter a name that is not "admin".
