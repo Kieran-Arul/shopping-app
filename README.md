@@ -1,7 +1,6 @@
 ## Project Overview
 
 - This program simulates a shopping app, complete with item reservation, inventory management and shopping baskets
-- Note I am still working on the main method. While the application's logic is completed and the main method will run, it is not user-friendly yet.
 
 ## How to Use
 
@@ -25,5 +24,6 @@
 
 	java com.kieran.Main
 
+6\. Note that in order to add items to the platform, you need to login as a user. That means, when you first run the program and it prompts you to enter your name, you need to enter "admin".
 
-
+7\. Later, the program will give you the opportunity to login as an ordinary user who can buy the available items.
